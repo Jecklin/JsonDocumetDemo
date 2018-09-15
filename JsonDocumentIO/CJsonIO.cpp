@@ -105,7 +105,8 @@ bool CJsonIO::WriteJson(const QString &dir, const QString &fileName)
         }
 
         QJsonDocument doc(object);
-        loadFile.write(doc.toJson());
+        QByteArray byteArray = doc.toJson();
+        loadFile.write(byteArray);
 
         loadFile.close();
         
