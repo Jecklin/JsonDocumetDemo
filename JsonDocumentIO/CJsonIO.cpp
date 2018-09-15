@@ -87,6 +87,7 @@ bool CJsonIO::WriteJson(const QString &dir, const QString &fileName)
     bool result = false;
     do
     {
+        //set QJsonObject
         QJsonObject object;
         QHash<QString, QString>::iterator iter;
         for (iter = m_hash.begin(); iter != m_hash.end(); ++iter)
@@ -94,11 +95,7 @@ bool CJsonIO::WriteJson(const QString &dir, const QString &fileName)
             object.insert(iter.key(), iter.value());
         }
         
-//        QJsonDocument document;
-//        document.setObject(json);
-////        QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-//        QByteArray byteArray = document.toBinaryData();
-            
+        //write document
         QString strFile = dir + fileName;
         QFile loadFile(strFile);
         if (!loadFile.open(QIODevice::WriteOnly))
@@ -108,17 +105,9 @@ bool CJsonIO::WriteJson(const QString &dir, const QString &fileName)
         }
 
         QJsonDocument doc(object);
-        loadFile.write(doc.toBinaryData());
+        loadFile.write(doc.toJson());
 
         loadFile.close();
-        
-
-        //        QTextStream out(&loadFile);
-        //        out << byteArray;
-                
-        //        QString strJson(byteArray);
-        //        out << strJson;
-        
         
         result = true;
    
