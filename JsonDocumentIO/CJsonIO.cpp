@@ -1,4 +1,4 @@
-#include "CJsonIO.h"
+﻿#include "CJsonIO.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
@@ -7,14 +7,23 @@
 #include <QDir>
 #include <QDebug>
 
+CJsonIO CJsonIO::m_jsonIO;
+
 CJsonIO::CJsonIO()
+    :m_hash()
+    ,m_defaultHash()
 {
-    
+    this->Init();
 }
 
 CJsonIO::~CJsonIO()
 {
     
+}
+
+CJsonIO *CJsonIO::GetInstance()
+{
+    return &m_jsonIO;
 }
 
 bool CJsonIO::ReadJson(const QString &dir, const QString &fileName)
@@ -23,8 +32,6 @@ bool CJsonIO::ReadJson(const QString &dir, const QString &fileName)
     do
     {
         QString file = dir + fileName;
-        qDebug() << file;
-        
         QFile loadFile(file);
         if (!loadFile.open(QIODevice::ReadOnly))
         {
@@ -95,6 +102,10 @@ bool CJsonIO::WriteJson(const QString &dir, const QString &fileName)
             object.insert(iter.key(), iter.value());
         }
         
+        //set QJsonDocument
+        QJsonDocument doc(object);
+        QByteArray byteArray = doc.toJson();
+        
         //write document
         QString strFile = dir + fileName;
         QFile loadFile(strFile);
@@ -103,11 +114,9 @@ bool CJsonIO::WriteJson(const QString &dir, const QString &fileName)
             qDebug() << "could't open projects json";
             break;
         }
-
-        QJsonDocument doc(object);
-        QByteArray byteArray = doc.toJson();
+        
+        
         loadFile.write(byteArray);
-
         loadFile.close();
         
         result = true;
@@ -117,7 +126,7 @@ bool CJsonIO::WriteJson(const QString &dir, const QString &fileName)
     return result;
 }
 
-void CJsonIO::Test()
+void CJsonIO::PrintCurJson()
 {
     QHash<QString,QString>::const_iterator iter = this->m_hash.constBegin();
     while (iter != this->m_hash.constEnd())
@@ -129,4 +138,29 @@ void CJsonIO::Test()
         
         ++iter;
     }   
+}
+
+QString CJsonIO::GetValue(QString key)
+{
+    QString value;
+
+    QHash<QString, QString>::const_iterator iter = this->m_hash.constBegin();
+    while (iter != this->m_hash.constEnd())
+    {
+        QString hashKey = iter.key();
+        if (hashKey == key)
+        {
+            value = iter.value();
+        }
+
+        ++iter;
+    }
+    
+    return value;
+}
+
+void CJsonIO::Init()
+{
+    this->ReadJson("./", "read.json");
+    this->m_defaultHash = this->m_hash;
 }

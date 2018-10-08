@@ -10,7 +10,11 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    CJsonIO.cpp
+    CJsonIO.cpp \
+    CJsonIO2.cpp \
+    CJsonIO3.cpp
 
 HEADERS += \
-    CJsonIO.h
+    CJsonIO.h \
+    CJsonIO2.h \
+    CJsonIO3.h
